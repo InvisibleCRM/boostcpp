@@ -1,4 +1,4 @@
-set BOOST_ROOT=E:\boost_1_61_0
+set BOOST_ROOT=E:\boost_1_65_0
 set dest_dir=%~dp0
 set striped_files=%BOOST_ROOT%\boost_stripped
 
