@@ -1,19 +1,18 @@
 /*=============================================================================
-    Copyright (c) 2001-2011 Joel de Guzman
+    Copyright (c) 2001-2006 Joel de Guzman
 
-    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    Distributed under the Boost Software License, Version 1.0. (See accompanying 
     file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 ==============================================================================*/
 #if !defined(FUSION_IS_SEQUENCE_05052005_1002)
 #define FUSION_IS_SEQUENCE_05052005_1002
 
+#include <boost/type_traits/is_base_of.hpp>
 #include <boost/fusion/support/sequence_base.hpp>
 #include <boost/fusion/support/tag_of.hpp>
 #include <boost/mpl/is_sequence.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 namespace boost { namespace fusion
 {
@@ -30,9 +29,7 @@ namespace boost { namespace fusion
         struct is_sequence_impl
         {
             template <typename Sequence>
-            struct apply
-              : is_convertible<Sequence, detail::from_sequence_convertible_type>
-            {};
+            struct apply : is_base_of<sequence_root, Sequence> {};
         };
 
         template <>
@@ -59,16 +56,9 @@ namespace boost { namespace fusion
     {
         template <typename T>
         struct is_sequence
-          : mpl::bool_<
-                (bool)extension::is_sequence_impl<
+          : extension::is_sequence_impl<
                 typename fusion::detail::tag_of<T>::type
-                >::template apply<T>::type::value
-            >
-        {};
-
-        template <typename Sequence, typename Enable = void>
-        struct is_native_fusion_sequence
-          : is_convertible<Sequence, detail::from_sequence_convertible_type>
+            >::template apply<T>
         {};
     }
 }}

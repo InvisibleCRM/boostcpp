@@ -23,11 +23,6 @@
 
 namespace boost { namespace numeric { namespace ublas {
 
-    /** \brief
-     *
-     * \tparam T
-     * \tparam A
-     */
     template<class T = std::size_t, class A = unbounded_array<T> >
     class permutation_matrix:
         public vector<T, A> {

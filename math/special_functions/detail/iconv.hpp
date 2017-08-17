@@ -24,8 +24,7 @@ inline int iconv_imp(T v, Policy const&, mpl::true_ const&)
 template <class T, class Policy>
 inline int iconv_imp(T v, Policy const& pol, mpl::false_ const&)
 {
-   BOOST_MATH_STD_USING
-   return iround(v, pol);
+   return boost::math::iround(v);
 }
 
 template <class T, class Policy>

@@ -13,6 +13,5 @@
 #include <boost/proto/debug.hpp>
 #include <boost/proto/context.hpp>
 #include <boost/proto/transform.hpp>
-#include <boost/proto/functional.hpp>
 
 #endif

@@ -18,14 +18,11 @@
                                                                                 \
     struct NAME                                                                 \
     {                                                                           \
-        NAME(WRAPPED_TYPE& in_obj)                                              \
-          : obj(in_obj)                                                         \
+        NAME(WRAPPED_TYPE& obj)                                                 \
+          : obj(obj)                                                            \
         {}                                                                      \
                                                                                 \
         WRAPPED_TYPE& obj;                                                      \
-                                                                                \
-    private:                                                                    \
-        NAME& operator= (NAME const&);                                          \
     };                                                                          \
                                                                                 \
     BOOST_FUSION_ADAPT_STRUCT_NAMESPACE_DEFINITION_END(NAMESPACE_SEQ)

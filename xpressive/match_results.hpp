@@ -62,6 +62,7 @@
 #ifndef BOOST_XPRESSIVE_DOXYGEN_INVOKED
 # include <boost/proto/proto_fwd.hpp>
 # include <boost/proto/traits.hpp>
+# include <boost/proto/eval.hpp>
 #endif
 
 namespace boost { namespace xpressive { namespace detail
@@ -119,8 +120,8 @@ struct char_overflow_handler_
 ///////////////////////////////////////////////////////////////////////////////
 // transform_op enum
 //
-enum transform_op { op_none = 0, op_upper = 1, op_lower = 2 };
-enum transform_scope { scope_next = 0, scope_rest = 1 };
+enum transform_op { None = 0, Upper = 1, Lower = 2 };
+enum transform_scope { Next = 0, Rest = 1 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // case_converting_iterator
@@ -132,8 +133,8 @@ struct case_converting_iterator
     case_converting_iterator(OutputIterator const &out, traits<Char> const *tr)
       : out_(out)
       , traits_(tr)
-      , next_(op_none)
-      , rest_(op_none)
+      , next_(None)
+      , rest_(None)
     {}
 
     OutputIterator base() const
@@ -144,7 +145,7 @@ struct case_converting_iterator
     case_converting_iterator &operator ++()
     {
         ++this->out_;
-        this->next_ = op_none;
+        this->next_ = None;
         return *this;
     }
 
@@ -162,8 +163,8 @@ struct case_converting_iterator
 
     friend bool set_transform(case_converting_iterator &iter, transform_op trans, transform_scope scope)
     {
-        BOOST_ASSERT(scope == scope_next || scope == scope_rest);
-        if(scope == scope_next)
+        BOOST_ASSERT(scope == Next || scope == Rest);
+        if(scope == Next)
             iter.next_ = trans;
         else
             iter.rest_ = trans;
@@ -174,11 +175,11 @@ struct case_converting_iterator
     {
         switch(this->next_ ? this->next_ : this->rest_)
         {
-        case op_lower:
+        case Lower:
             ch = this->traits_->tolower(ch);
             break;
 
-        case op_upper:
+        case Upper:
             ch = this->traits_->toupper(ch);
             break;
 
@@ -659,9 +660,9 @@ public:
         using std::swap;
         swap(this->regex_id_, that.regex_id_);
         this->sub_matches_.swap(that.sub_matches_);
-        this->base_.swap(that.base_);
-        this->prefix_.swap(that.prefix_);
-        this->suffix_.swap(that.suffix_);
+        swap(this->base_, that.base_);
+        swap(this->prefix_, that.prefix_);
+        swap(this->suffix_, that.suffix_);
         this->nested_results_.swap(that.nested_results_);
         this->extras_ptr_.swap(that.extras_ptr_);
         this->traits_.swap(that.traits_);
@@ -934,14 +935,12 @@ private:
     (
         OutputIterator out
       , Expr const &format
-      , regex_constants::match_flag_type
+      , regex_constants::match_flag_type flags
       , mpl::size_t<4>
     ) const
     {
-        // detail::ReplaceAlgo may be an incomplete type at this point, so
-        // we can't construct it directly.
-        typedef typename mpl::if_c<true, detail::ReplaceAlgo, OutputIterator>::type ReplaceAlgo;
-        return this->format2_(out, ReplaceAlgo()(format, 0, *this));
+        detail::replacement_context<BidiIter> ctx(*this);
+        return this->format2_(out, proto::eval(format, ctx));
     }
 
     /// INTERNAL ONLY
@@ -1096,12 +1095,11 @@ private:
             case BOOST_XPR_CHAR_(char_type, ':'):
                 if(metacolon)
                 {
-                    BOOST_FALLTHROUGH;
             case BOOST_XPR_CHAR_(char_type, ')'):
                     ++cur;
                     return out;
                 }
-                BOOST_FALLTHROUGH;
+                // else fall-through
 
             default:
                 *out++ = *cur++;
@@ -1251,35 +1249,35 @@ private:
             break;
 
         case BOOST_XPR_CHAR_(char_type, 'l'):
-            if(!set_transform(out, detail::op_lower, detail::scope_next))
+            if(!set_transform(out, detail::Lower, detail::Next))
             {
                 *out++ = BOOST_XPR_CHAR_(char_type, 'l');
             }
             break;
 
         case BOOST_XPR_CHAR_(char_type, 'L'):
-            if(!set_transform(out, detail::op_lower, detail::scope_rest))
+            if(!set_transform(out, detail::Lower, detail::Rest))
             {
                 *out++ = BOOST_XPR_CHAR_(char_type, 'L');
             }
             break;
 
         case BOOST_XPR_CHAR_(char_type, 'u'):
-            if(!set_transform(out, detail::op_upper, detail::scope_next))
+            if(!set_transform(out, detail::Upper, detail::Next))
             {
                 *out++ = BOOST_XPR_CHAR_(char_type, 'u');
             }
             break;
 
         case BOOST_XPR_CHAR_(char_type, 'U'):
-            if(!set_transform(out, detail::op_upper, detail::scope_rest))
+            if(!set_transform(out, detail::Upper, detail::Rest))
             {
                 *out++ = BOOST_XPR_CHAR_(char_type, 'U');
             }
             break;
 
         case BOOST_XPR_CHAR_(char_type, 'E'):
-            if(!set_transform(out, detail::op_none, detail::scope_rest))
+            if(!set_transform(out, detail::None, detail::Rest))
             {
                 *out++ = BOOST_XPR_CHAR_(char_type, 'E');
             }

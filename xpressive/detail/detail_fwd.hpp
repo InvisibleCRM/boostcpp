@@ -42,7 +42,8 @@ namespace boost { namespace xpressive { namespace detail
 
     struct action_context;
 
-    struct ReplaceAlgo;
+    template<typename BidiIter>
+    struct replacement_context;
 
     ///////////////////////////////////////////////////////////////////////////////
     // placeholders

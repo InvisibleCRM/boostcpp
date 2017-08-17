@@ -20,7 +20,7 @@ namespace boost { namespace fusion { namespace extension
         struct apply
         {
            typedef typename
-               access::struct_member<
+               extension::struct_member<
                    typename remove_const<typename It::seq_type>::type
                  , It::index::value
                >::template apply<typename It::seq_type>

@@ -18,7 +18,7 @@ namespace boost { namespace fusion { namespace extension
     {
         template <typename It>
         struct apply
-          : access::struct_member<
+          : extension::struct_member<
                 typename remove_const<typename It::seq_type>::type
               , It::index::value
             >

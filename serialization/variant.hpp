@@ -41,7 +41,6 @@
 
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/serialization.hpp>
-#include <boost/serialization/nvp.hpp>
 
 namespace boost {
 namespace serialization {

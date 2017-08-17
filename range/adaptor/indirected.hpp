@@ -19,7 +19,7 @@ namespace boost
     namespace range_detail
     {
         template< class R >
-        struct indirected_range :
+        struct indirect_range :
             public boost::iterator_range<
                         boost::indirect_iterator<
                             BOOST_DEDUCED_TYPENAME range_iterator<R>::type
@@ -35,7 +35,7 @@ namespace boost
                 base;
 
         public:
-            explicit indirected_range( R& r )
+            explicit indirect_range( R& r )
                 : base( r )
             { }
         };
@@ -43,22 +43,22 @@ namespace boost
         struct indirect_forwarder {};
 
         template< class InputRng >
-        inline indirected_range<InputRng>
+        inline indirect_range<InputRng>
         operator|( InputRng& r, indirect_forwarder )
         {
-            return indirected_range<InputRng>( r );
+            return indirect_range<InputRng>( r );
         }
 
         template< class InputRng >
-        inline indirected_range<const InputRng>
+        inline indirect_range<const InputRng>
         operator|( const InputRng& r, indirect_forwarder )
         {
-            return indirected_range<const InputRng>( r );
+            return indirect_range<const InputRng>( r );
         }
 
     } // 'range_detail'
 
-    using range_detail::indirected_range;
+    using range_detail::indirect_range;
 
     namespace adaptors
     {
@@ -69,17 +69,17 @@ namespace boost
         }
 
         template<class InputRange>
-        inline indirected_range<InputRange>
+        inline indirect_range<InputRange>
         indirect(InputRange& rng)
         {
-            return indirected_range<InputRange>(rng);
+            return indirect_range<InputRange>(rng);
         }
 
         template<class InputRange>
-        inline indirected_range<const InputRange>
+        inline indirect_range<const InputRange>
         indirect(const InputRange& rng)
         {
-            return indirected_range<const InputRange>(rng);
+            return indirect_range<const InputRange>(rng);
         }
     } // 'adaptors'
 
